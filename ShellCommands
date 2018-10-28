@@ -1,3 +1,5 @@
+https://www.careercup.com/question?id=5685801251766272
+
 Time_difference.txt
 
 STARTTIME:2015-12-01 04:13:15 
@@ -10,6 +12,49 @@ STARTTIME:2015-12-01 04:10:10
 ENDTIME :2015-12-01 04:10:11
 
 Print the time difference.
+
+Explanation for awk '{system("date +\"%s\" --date=\"" $0 "\"")}':
+$0 needs to be expanded hence it needs to be in double quotes i.e. "$0". 
+However this value needs to be suplied to --date, so this needs to be handed over with double quotes however these double
+quotes doesn't mean closing the system command hence they need to be protected with \. So --date=\" "$0" \"
+Finally system command needs to be closed and hence it has " at the end. 
+Explanation for sed 'N;s/\n/-/;s/.*/echo \$((&))/e;'
+sed N Append the next line of input to the pattern space, using an embedded newline character to separate the 
+       appended material from the original contents.  Note that the current line number changes.
+       Ex: cat Time_difference.txt|sed '='
+1
+STARTTIME:2015-12-01 04:13:15 
+2
+ENDTIME :2015-12-01 04:14:16 
+3
+STARTTIME:2015-12-01 04:11:15 
+4
+ENDTIME :2015-12-01 04:11:17 
+5
+STARTTIME:2015-12-01 04:12:15 
+6
+ENDTIME :2015-12-01 04:15:15 
+7
+STARTTIME:2015-12-01 04:10:10 
+8
+Notice the difference in line numbers. 
+cat Time_difference.txt|sed '=;N;'
+1
+STARTTIME:2015-12-01 04:13:15 
+ENDTIME :2015-12-01 04:14:16 
+3
+STARTTIME:2015-12-01 04:11:15 
+ENDTIME :2015-12-01 04:11:17 
+5
+STARTTIME:2015-12-01 04:12:15 
+ENDTIME :2015-12-01 04:15:15 
+7
+STARTTIME:2015-12-01 04:10:10 
+ENDTIME :2015-12-01 04:10:11
+
+So the second statement in sed i.e. s/\n/-/ is replacing the embedded newline character into a minus sign. 
+Last statement s/.*/echo \$((&))/e is evaluating the expession group. 
+
 cat Time_difference.txt|cut -d":" -f2-|awk '{system("date +\"%s\" --date=\"" $0 "\"")}'|sed 'N;s/\n/-/;s/.*/echo \$((&))/e;'
 cat Time_difference.txt|cut -d":" -f2-|awk '{system("date +\"%s\" --date=\"" $0 "\"")}'|sed 'N;s/\n/-/;'|awk -F"-" '{ print $2-$1 }'
 cat Time_difference.txt|cut -d":" -f2-|awk '{system("date +\"%s\" --date=\"" $0 "\"")}'|awk '!(NR%2){print $0-p}{p=$0}'
